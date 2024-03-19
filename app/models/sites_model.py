@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class Sites(BaseModel):
-    Name: int
+    Name: str
     Address: str
