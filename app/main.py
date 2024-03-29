@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.users_routes import router as users_router
 from routes.sites_routes import router as sites_router
-
+from routes.typeusers_routes import router as typeusers_router
+from routes.orders_routes import router as orders_router
 app = FastAPI()
 
 origins = [
@@ -22,6 +23,8 @@ app.add_middleware(
 )
 app.include_router(users_router)
 app.include_router(sites_router)
+app.include_router(typeusers_router)
+app.include_router(orders_router)
 
 
 if __name__ == "__main__":

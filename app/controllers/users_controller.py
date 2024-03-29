@@ -4,6 +4,7 @@ from config.db_config import get_db_connection
 from models.users_model import Users
 from fastapi.encoders import jsonable_encoder
 
+
 class UsersController:
 
     def get_users(self):
@@ -120,5 +121,5 @@ class UsersController:
             return {"informacion": "Usuario eliminado"}
         except Exception as error:
             return {"resultado": str(error)}
-    
+
 users_controller = UsersController()
