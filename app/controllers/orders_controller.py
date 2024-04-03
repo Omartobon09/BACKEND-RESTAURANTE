@@ -70,24 +70,55 @@ class OrdersController:
             cursor.execute("""
             SELECT * FROM orders 
             WHERE DATE(TimeOrder) = %s 
-            AND StatusOrder = 'Pendiente'
+            AND (StatusOrder = 'Pendiente' OR StatusOrder = 'Listo')
         """, (today,))
             results = cursor.fetchall()
             orders = []
             for result in results:
                 order = {
-                    'idUser': result[0],
-                    'Description': result[1],
-                    'NumberTable': result[2],
-                    'StatusOrder': result[3],
-                    'TimeOrder': result[4],
-                    'idSite': result[5]
+                    'idOrder': result[0],
+                    'idUser': result[1],
+                    'Description': result[2],
+                    'NumberTable': result[3],
+                    'StatusOrder': result[4],
+                    'TimeOrder': result[5],
+                    'idSite': result[6]
                 }
                 orders.append(order)
             if orders:
                 return {"resultado": orders}
             else:
                 return {"resultado": "No se encontraron órdenes pendientes hoy"}
+        except Exception as error:
+            return {"resultado": str(error)}
+
+    def get_completed_orders_today(self):
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            today = datetime.now().date()
+            cursor.execute("""
+            SELECT * FROM orders 
+            WHERE DATE(TimeOrder) = %s 
+            AND StatusOrder = 'Entregado'
+        """, (today,))
+            results = cursor.fetchall()
+            orders = []
+            for result in results:
+                order = {
+                    'idOrder': result[0],
+                    'idUser': result[1],
+                    'Description': result[2],
+                    'NumberTable': result[3],
+                    'StatusOrder': result[4],
+                    'TimeOrder': result[5],
+                    'idSite': result[6]
+                }
+                orders.append(order)
+            if orders:
+                return {"resultado": orders}
+            else:
+                return {"resultado": "No se encontraron órdenes Completadas hoy"}
         except Exception as error:
             return {"resultado": str(error)}
 
@@ -115,6 +146,39 @@ class OrdersController:
                 return {"resultado": orders}
             else:
                 return {"resultado": "No se encontraron órdenes para este usuario hoy"}
+        except Exception as error:
+            return {"resultado": str(error)}
+
+    def get_orders_for_today(self, id_site):
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            today_date = datetime.now().strftime('%Y-%m-%d')
+            cursor.execute("""
+            SELECT * FROM orders
+            WHERE DATE(TimeOrder) = %s
+            AND idSite = %s
+        """, (today_date, id_site))
+
+            result = cursor.fetchall()
+
+            payload = []
+            content = {}
+            for data in result:
+                content = {
+                    'idOrder': data[0],
+                    'idUser': data[1],
+                    'Description': data[2],
+                    'NumberTable': data[3],
+                    'StatusOrder': data[4],
+                    'TimeOrder': data[5],
+                    'idSite': data[6]
+                }
+                payload.append(content)
+                content = {}
+
+            json_data = jsonable_encoder(payload)
+            return {"resultado": json_data}
         except Exception as error:
             return {"resultado": str(error)}
 
@@ -189,4 +253,4 @@ class OrdersController:
 
 orders_controller = OrdersController()
 
-# las ordenes del dia actual 
+# las ordenes del dia actual

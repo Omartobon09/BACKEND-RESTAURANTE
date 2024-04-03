@@ -25,10 +25,20 @@ async def get_orders_id(idOrder: int):
 
 # trae las ordenes que estan pendientes del dia actual
 
+
 @router.get("/get/orders/status/pending")
 async def get_pending_orders_today():
     result = new_orders.get_pending_orders_today()
     return result
+
+# trae las ordenes que estan completas del dia actual
+
+
+@router.get("/get/orders/status/entregado")
+async def get_completed_orders_today():
+    result = new_orders.get_completed_orders_today()
+    return result
+
 
 # trae las ordenes del mesero del dia actual
 
@@ -38,6 +48,14 @@ async def get_orders_today(idUser: int):
     rpta = new_orders.get_orders_today(idUser)
     return rpta
 
+
+# trae las ordenes del dia actual por idsite
+
+
+@router.get("/get/orders/today/sites/{idSite}")
+async def get_orders_for_today(idSite: int):
+    rpta = new_orders.get_orders_for_today(idSite)
+    return rpta
 
 @router.post("/post/orders")
 async def post_orders(neworders: Orders):
