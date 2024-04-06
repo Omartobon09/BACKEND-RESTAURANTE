@@ -117,4 +117,4 @@ class ProductsController:
             conn.close()
 
 
-Products_controller = ProductsController()
+products_controller = ProductsController()

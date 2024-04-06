@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-import mysql.connector
 from fastapi import HTTPException
 from config.db_config import get_db_connection
 from models.orders_model import Orders
