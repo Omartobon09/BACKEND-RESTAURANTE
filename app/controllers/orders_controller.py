@@ -5,7 +5,7 @@ from config.db_config import get_db_connection
 from models.orders_model import Orders
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
-from datetime import date
+
 
 
 class OrdersController:
@@ -59,8 +59,6 @@ class OrdersController:
                 return {"resultado": "Orden no encontrada"}
         except Exception as error:
             return {"resultado": str(error)}
-
-        from datetime import datetime
 
     def get_pending_orders_today(self):
         try:
@@ -253,4 +251,4 @@ class OrdersController:
 
 orders_controller = OrdersController()
 
-# las ordenes del dia actual
+
