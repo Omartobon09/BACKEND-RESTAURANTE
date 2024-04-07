@@ -15,14 +15,37 @@ class InventoryProductsController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT id, quantity, idInventorySite, idProduct FROM inventory_products")
+                "SELECT id, quantity, idSite, idProduct FROM inventory_products")
             result = cursor.fetchall()
             payload = []
             for data in result:
                 product = {
                     'id': data[0],
                     'quantity': data[1],
-                    'idInventorySite': data[2],
+                    'idSite': data[2],
+                    'idProduct': data[3]
+                }
+                payload.append(product)
+            return {"resultado": payload}
+        except Exception as error:
+            return {"resultado": str(error)}
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_inventory_products_by_site(self, idSite: int):
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT id, quantity, idSite, idProduct FROM inventory_products WHERE idSite = %s", (idSite,))
+            result = cursor.fetchall()
+            payload = []
+            for data in result:
+                product = {
+                    'id': data[0],
+                    'quantity': data[1],
+                    'idSite': data[2],
                     'idProduct': data[3]
                 }
                 payload.append(product)
@@ -38,13 +61,13 @@ class InventoryProductsController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT id, quantity, idInventorySite, idProduct FROM inventory_products WHERE id = %s", (id,))
+                "SELECT id, quantity, idSite, idProduct FROM inventory_products WHERE id = %s", (id,))
             result = cursor.fetchone()
             if result:
                 product = {
                     'id': result[0],
                     'quantity': result[1],
-                    'idInventorySite': result[2],
+                    'idSite': result[2],
                     'idProduct': result[3]
                 }
                 return {"resultado": product}
@@ -61,10 +84,10 @@ class InventoryProductsController:
             conn = get_db_connection()
             cursor = conn.cursor()
             quantity = new_inventory_product.quantity
-            idInventorySite = new_inventory_product.idInventorySite
+            idSite = new_inventory_product.idSite
             idProduct = new_inventory_product.idProduct
-            cursor.execute("INSERT INTO inventory_products(quantity, idInventorySite, idProduct) VALUES (%s, %s, %s)",
-                           (quantity, idInventorySite, idProduct))
+            cursor.execute("INSERT INTO inventory_products(quantity, idSite, idProduct) VALUES (%s, %s, %s)",
+                           (quantity, idSite, idProduct))
             conn.commit()
             return {"informacion": "Producto de inventario registrado"}
         except Exception as error:
@@ -84,15 +107,15 @@ class InventoryProductsController:
                 raise HTTPException(
                     status_code=404, detail="El producto de inventario no se encuentra en la base de datos")
             quantity = new_inventory_product.quantity
-            idInventorySite = new_inventory_product.idInventorySite
+            idSite = new_inventory_product.idSite
             idProduct = new_inventory_product.idProduct
             cursor.execute("""
             UPDATE inventory_products SET 
             quantity = %s,
-            idInventorySite = %s,
+            idSite = %s,
             idProduct = %s
             WHERE id = %s
-        """, (quantity, idInventorySite, idProduct, id))
+        """, (quantity, idSite, idProduct, id))
             conn.commit()
             return {"informacion": "Producto de inventario actualizado"}
         except Exception as error:
@@ -105,15 +128,21 @@ class InventoryProductsController:
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
+
             cursor.execute(
                 "SELECT id FROM inventory_products WHERE id = %s", (id,))
             result = cursor.fetchone()
             if not result:
                 return {"informacion": "El producto de inventario no se encuentra en la base de datos"}
+
             cursor.execute(
                 "DELETE FROM inventory_products WHERE id = %s", (id,))
             conn.commit()
-            return {"informacion": "Producto de inventario eliminado"}
+
+            cursor.execute("ALTER TABLE inventory_products AUTO_INCREMENT = 1")
+            conn.commit()
+
+            return {"informacion": "Producto de inventario eliminado y autoincremento reiniciado"}
         except Exception as error:
             return {"resultado": str(error)}
         finally:

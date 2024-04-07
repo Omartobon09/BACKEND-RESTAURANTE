@@ -5,22 +5,22 @@ from controllers.inventory_products_controller import InventoryProductsControlle
 router = APIRouter()
 inventory_products_controller = InventoryProductsController()
 
-@router.get("/inventory-products")
+@router.get("/get/inventory-products")
 async def get_inventory_products():
     return inventory_products_controller.get_inventory_products()
 
-@router.get("/inventory-products/{id}")
+@router.get("/get/inventory-products/{id}")
 async def get_inventory_product_by_id(id: int):
     return inventory_products_controller.get_inventory_product_by_id(id)
 
-@router.post("/inventory-products")
+@router.post("/post/inventory-products")
 async def post_inventory_product(new_inventory_product: InventoryProducts):
     return inventory_products_controller.post_inventory_product(new_inventory_product)
 
-@router.put("/inventory-products/{id}")
+@router.put("/update/inventory-products/{id}")
 async def update_inventory_product(id: int, new_inventory_product: InventoryProducts):
     return inventory_products_controller.update_inventory_product(id, new_inventory_product)
 
-@router.delete("/inventory-products/{id}")
+@router.delete("/delete/inventory-products/{id}")
 async def delete_inventory_product(id: int):
     return inventory_products_controller.delete_inventory_product(id)

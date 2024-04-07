@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 
 class InventoryProducts (BaseModel):
-
+    idSite: int
     quantity: int
-idInventorySite: int
-idProduct: int
+    idProduct: int
