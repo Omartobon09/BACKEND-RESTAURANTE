@@ -8,6 +8,7 @@ from routes.orders_routes import router as orders_router
 from routes.Auth_routes import router as Auth_router
 from routes.products_routes import router as products_router
 from routes.inventory_products_routes import router as inventory_products_router
+from routes.invoices_routes import router as invoices_router
 app = FastAPI()
 
 origins = [
@@ -31,6 +32,7 @@ app.include_router(orders_router)
 app.include_router(Auth_router)
 app.include_router(products_router)
 app.include_router(inventory_products_router)
+app.include_router(invoices_router)
 
 
 if __name__ == "__main__":

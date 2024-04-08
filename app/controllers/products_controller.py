@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
 
+
 class ProductsController:
 
     def get_products(self):
@@ -93,27 +94,37 @@ class ProductsController:
             cursor.close()
             conn.close()
 
-    def delete_product(self, idProduct: int):
+    def delete_invoice(self, idInvoice: int):
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
+
+            # Verificar si la factura existe
             cursor.execute(
-                "SELECT idProduct FROM products WHERE idProduct = %s", (idProduct,))
+                "SELECT idInvoice FROM invoices WHERE idInvoice = %s", (idInvoice,))
             result = cursor.fetchone()
             if not result:
-                return {"informacion": "El producto no se encuentra en la base de datos"}
+                return {"informacion": "La factura no se encuentra en la base de datos"}
+
+            # Eliminar la factura
             cursor.execute(
-                "DELETE FROM products WHERE idProduct = %s", (idProduct,))
+                "DELETE FROM invoices WHERE idInvoice = %s", (idInvoice,))
             conn.commit()
+
+            # Obtener el máximo idInvoice
+            cursor.execute("SELECT MAX(idInvoice) FROM invoices")
+            max_id = cursor.fetchone()[0] if cursor.fetchone() else 0
+
+            # Reiniciar el contador de autoincremento
+            cursor.execute(
+                f"ALTER TABLE invoices AUTO_INCREMENT = {max_id + 1}")
+            conn.commit()
+
             cursor.close()
-            cursor = conn.cursor()
-            cursor.execute("ALTER TABLE products AUTO_INCREMENT = 1")
-            conn.commit()
-            return {"informacion": "Producto eliminado"}
+            return {"informacion": "Factura eliminada"}
         except Exception as error:
             return {"resultado": str(error)}
         finally:
-            cursor.close()
             conn.close()
 
 

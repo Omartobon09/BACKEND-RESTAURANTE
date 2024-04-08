@@ -13,6 +13,10 @@ async def get_inventory_products():
 async def get_inventory_product_by_id(id: int):
     return inventory_products_controller.get_inventory_product_by_id(id)
 
+@router.get("/get/inventory-products/{idSite}")
+async def get_inventory_products_by_site(idSite: int):
+    return inventory_products_controller.get_inventory_products_by_site(idSite)
+
 @router.post("/post/inventory-products")
 async def post_inventory_product(new_inventory_product: InventoryProducts):
     return inventory_products_controller.post_inventory_product(new_inventory_product)

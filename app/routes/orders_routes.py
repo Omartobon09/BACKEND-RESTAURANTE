@@ -73,3 +73,8 @@ async def update_order(idOrder: int, neworders: Orders):
 async def delete_order(idOrder: int):
     result = new_orders.delete_orders(idOrder)
     return result
+
+@router.get("/get/order/description/{idOrder}")
+async def get_order_descripcion_by_id(idOrder: int):
+    result = new_orders.get_order_descripcion_by_id(idOrder)
+    return result

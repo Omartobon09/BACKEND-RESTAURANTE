@@ -6,7 +6,6 @@ from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 
 
-
 class OrdersController:
 
     def get_orders(self):
@@ -58,6 +57,24 @@ class OrdersController:
                 return {"resultado": "Orden no encontrada"}
         except Exception as error:
             return {"resultado": str(error)}
+
+    def get_order_descripcion_by_id(self, idOrder):
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT Description FROM orders WHERE idOrder = %s", (idOrder,))
+            result = cursor.fetchone()
+            if result:
+                product_description = result[0]
+                return {"resultado": product_description}
+            else:
+                return {"resultado": "Producto no encontrado"}
+        except Exception as error:
+            return {"resultado": str(error)}
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_pending_orders_today(self):
         try:
@@ -249,5 +266,3 @@ class OrdersController:
 
 
 orders_controller = OrdersController()
-
-
